@@ -1,12 +1,13 @@
 import { Suspense } from "react";
 import { Chrome, Trophy } from "lucide-react";
+import PendingButton from "@/components/PendingButton";
 import { signInWithGoogle } from "@/lib/actions";
 
 function LoginNotice({ error }: { error?: string }) {
   if (!error) return null;
 
   return (
-    <div className="mb-6 rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-center text-sm font-medium text-red-400">
+    <div className="mb-6 rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-center text-sm font-medium text-red-400" role="alert">
       {error}
     </div>
   );
@@ -85,13 +86,13 @@ export default function LoginPage({
           </Suspense>
 
           <form action={signInWithGoogle}>
-            <button
-              className="flex w-full items-center justify-center gap-3 rounded-xl bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 transition-colors hover:bg-slate-200 active:scale-[0.98]"
-              type="submit"
+            <PendingButton
+              className="flex w-full items-center justify-center gap-3 rounded-xl bg-white px-4 py-3.5 text-sm font-semibold text-slate-900 hover:bg-slate-200"
+              pendingText="Connecting..."
             >
               <Chrome size={18} className="text-slate-700" />
               Continue with Google
-            </button>
+            </PendingButton>
           </form>
 
           {/* Legal Footer */}

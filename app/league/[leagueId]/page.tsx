@@ -5,7 +5,16 @@ import CopyInviteButton from "@/components/CopyInviteButton";
 import Leaderboard, { type LeaderboardEntry } from "@/components/Leaderboard";
 import MatchCard from "@/components/MatchCard";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
+import { getOpenPredictionMatchIds } from "@/lib/predictionWindow";
 import type { League, Match, Prediction, Profile, StakeSettlement } from "@/types/db";
+
+const LEAGUE_COLUMNS = "id,name,invite_code,created_by,created_at";
+const MATCH_CARD_COLUMNS =
+  "id,match_number,tournament,stage,group_name,team_a,team_b,kickoff_time,venue,team_a_score,team_b_score,status,created_at";
+const PREDICTION_COLUMNS =
+  "id,league_id,match_id,user_id,pred_team_a_score,pred_team_b_score,stake_text,points_awarded,submitted_at";
+const STAKE_SETTLEMENT_COLUMNS = "id,league_id,match_id,owed_by,owed_to,stake_text,settled,created_at";
+const PROFILE_COLUMNS = "id,username,full_name,bio,favorite_team,avatar_url,created_at";
 
 // Keep logic exactly the same
 function buildLeaderboard(
@@ -70,11 +79,18 @@ export default async function LeaguePage({
 
   const [{ data: league }, { data: members }, { data: predictions }, { data: matches }, { data: settlements }] =
     await Promise.all([
-      supabase.from("leagues").select("*").eq("id", params.leagueId).single(),
-      supabase.from("league_members").select("user_id, profiles(id,full_name,avatar_url,created_at)").eq("league_id", params.leagueId),
-      supabase.from("predictions").select("*").eq("league_id", params.leagueId),
-      supabase.from("matches").select("*").order("kickoff_time", { ascending: true }),
-      supabase.from("stake_settlements").select("*").eq("league_id", params.leagueId).order("created_at", { ascending: false })
+      supabase.from("leagues").select(LEAGUE_COLUMNS).eq("id", params.leagueId).single(),
+      supabase
+        .from("league_members")
+        .select("user_id, profiles(id,username,full_name,avatar_url,favorite_team,created_at)")
+        .eq("league_id", params.leagueId),
+      supabase.from("predictions").select(PREDICTION_COLUMNS).eq("league_id", params.leagueId),
+      supabase.from("matches").select(MATCH_CARD_COLUMNS).order("kickoff_time", { ascending: true }),
+      supabase
+        .from("stake_settlements")
+        .select(STAKE_SETTLEMENT_COLUMNS)
+        .eq("league_id", params.leagueId)
+        .order("created_at", { ascending: false })
     ]);
 
   if (!league) {
@@ -82,7 +98,9 @@ export default async function LeaguePage({
   }
 
   const typedLeague = league as League;
+  const typedMatches = (matches ?? []) as Match[];
   const typedPredictions = (predictions ?? []) as Prediction[];
+  const openPredictionMatchIds = getOpenPredictionMatchIds(typedMatches);
   const leaderboard = buildLeaderboard((members ?? []) as any, typedPredictions);
   const userPredictions = new Map(
     typedPredictions
@@ -95,7 +113,7 @@ export default async function LeaguePage({
     )
   );
   const { data: settlementProfiles } =
-    profileIds.length > 0 ? await supabase.from("profiles").select("*").in("id", profileIds) : { data: [] };
+    profileIds.length > 0 ? await supabase.from("profiles").select(PROFILE_COLUMNS).in("id", profileIds) : { data: [] };
   const profileMap = new Map(((settlementProfiles ?? []) as Profile[]).map((profile) => [profile.id, profile]));
 
   return (
@@ -177,18 +195,24 @@ export default async function LeaguePage({
         {/* Matches Section */}
         <div className="animate-fade-in mt-12" style={{ animationDelay: "300ms" }}>
           <div className="mb-6 flex items-center justify-between border-b border-zinc-200 pb-3 dark:border-zinc-800">
-            <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-              <CalendarRange size={20} className="text-zinc-400 dark:text-zinc-500" />
-              League Matches
-            </h2>
+            <div>
+              <h2 className="flex items-center gap-2 text-xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+                <CalendarRange size={20} className="text-zinc-400 dark:text-zinc-500" />
+                League Matches
+              </h2>
+              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                Predictions are open for the next 2 upcoming matches only.
+              </p>
+            </div>
           </div>
           
           <div className="grid gap-5 md:grid-cols-2">
-            {((matches ?? []) as Match[]).map((match) => (
+            {typedMatches.map((match) => (
               <MatchCard
                 key={match.id}
                 leagueId={params.leagueId}
                 match={match}
+                canPredict={openPredictionMatchIds.has(match.id)}
                 prediction={userPredictions.get(match.id) ?? null}
               />
             ))}

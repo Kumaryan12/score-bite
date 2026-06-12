@@ -8,9 +8,11 @@ export default function MatchCard({
   match,
   leagueId,
   prediction,
+  canPredict = false,
 }: {
   match: Match;
   leagueId?: string;
+  canPredict?: boolean;
   prediction?: {
     pred_team_a_score: number;
     pred_team_b_score: number;
@@ -19,9 +21,10 @@ export default function MatchCard({
   } | null;
 }) {
   const locked = isPredictionLocked(match);
+  const predictionsOpen = !locked && canPredict;
 
   return (
-    <article className="group rounded-xl border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700 sm:p-6">
+    <article className="group rounded-xl border border-zinc-200 bg-white p-5 transition-colors duration-150 hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700 sm:p-6">
       {/* Header: Stage, Time, and Status */}
       <div className="mb-6 flex items-start justify-between gap-4">
         <div className="flex flex-col gap-1.5">
@@ -95,13 +98,13 @@ export default function MatchCard({
         <Link
           href={`/league/${leagueId}/match/${match.id}`}
           className={`mt-2 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-colors ${
-            locked
+            locked || !predictionsOpen
               ? "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
               : "bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
           }`}
         >
-          {locked && <Lock size={15} />}
-          {locked ? "View details" : "Make prediction"}
+          {(locked || !predictionsOpen) && <Lock size={15} />}
+          {locked ? "View details" : predictionsOpen ? "Make prediction" : "Opens soon"}
         </Link>
       )}
     </article>

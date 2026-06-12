@@ -4,8 +4,14 @@ import { ArrowLeft, CalendarClock, MapPin, CheckCircle2, AlertCircle } from "luc
 import PredictionForm from "@/components/PredictionForm";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 import { formatMatchTime, resultText } from "@/lib/helpers";
+import { getOpenPredictionMatchIds } from "@/lib/predictionWindow";
 import { predictionLabel } from "@/lib/scoring";
 import type { Match, Prediction } from "@/types/db";
+
+const MATCH_DETAIL_COLUMNS =
+  "id,match_number,tournament,stage,group_name,team_a,team_b,kickoff_time,venue,team_a_score,team_b_score,status,created_at";
+const PREDICTION_COLUMNS =
+  "id,league_id,match_id,user_id,pred_team_a_score,pred_team_b_score,stake_text,points_awarded,submitted_at";
 
 export default async function MatchPredictionPage({
   params,
@@ -34,15 +40,16 @@ export default async function MatchPredictionPage({
     redirect("/dashboard?error=You do not belong to that league.");
   }
 
-  const [{ data: match }, { data: prediction }] = await Promise.all([
-    supabase.from("matches").select("*").eq("id", params.matchId).single(),
+  const [{ data: match }, { data: prediction }, { data: upcomingMatches }] = await Promise.all([
+    supabase.from("matches").select(MATCH_DETAIL_COLUMNS).eq("id", params.matchId).single(),
     supabase
       .from("predictions")
-      .select("*")
+      .select(PREDICTION_COLUMNS)
       .eq("league_id", params.leagueId)
       .eq("match_id", params.matchId)
       .eq("user_id", user.id)
-      .maybeSingle()
+      .maybeSingle(),
+    supabase.from("matches").select("id,kickoff_time,status").order("kickoff_time", { ascending: true })
   ]);
 
   if (!match) {
@@ -51,6 +58,8 @@ export default async function MatchPredictionPage({
 
   const typedMatch = match as Match;
   const typedPrediction = prediction as Prediction | null;
+  const openPredictionMatchIds = getOpenPredictionMatchIds((upcomingMatches ?? []) as Match[]);
+  const canPredict = openPredictionMatchIds.has(typedMatch.id);
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:py-12">
@@ -59,19 +68,19 @@ export default async function MatchPredictionPage({
         className="group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 mb-8" 
         href={`/league/${params.leagueId}`}
       >
-        <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-0.5" />
+        <ArrowLeft size={16} />
         Back to league
       </Link>
 
       {/* Alerts */}
       {searchParams.error && (
-        <div className="mb-8 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-600 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-400">
+        <div className="mb-8 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-600 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-400" role="alert">
           <AlertCircle size={18} />
           {searchParams.error}
         </div>
       )}
       {searchParams.saved && (
-        <div className="mb-8 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-400">
+        <div aria-live="polite" className="mb-8 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-400" role="status">
           <CheckCircle2 size={18} />
           Prediction successfully saved.
         </div>
@@ -82,7 +91,7 @@ export default async function MatchPredictionPage({
         
         {/* Left Column: Form */}
         <div>
-          <PredictionForm leagueId={params.leagueId} match={typedMatch} prediction={typedPrediction} />
+          <PredictionForm leagueId={params.leagueId} match={typedMatch} prediction={typedPrediction} canPredict={canPredict} />
         </div>
 
         {/* Right Column: Match Details Sidebar */}

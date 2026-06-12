@@ -2,9 +2,15 @@ import MatchCard from "@/components/MatchCard";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 import type { Match } from "@/types/db";
 
+const MATCH_CARD_COLUMNS =
+  "id,match_number,tournament,stage,group_name,team_a,team_b,kickoff_time,venue,team_a_score,team_b_score,status,created_at";
+
 export default async function MatchesPage() {
   const supabase = createServerSupabaseClient();
-  const { data: matches } = await supabase.from("matches").select("*").order("kickoff_time", { ascending: true });
+  const { data: matches } = await supabase
+    .from("matches")
+    .select(MATCH_CARD_COLUMNS)
+    .order("kickoff_time", { ascending: true });
   const typedMatches = (matches ?? []) as Match[];
   const upcoming = typedMatches.filter((match) => match.status !== "completed");
   const completed = typedMatches.filter((match) => match.status === "completed");

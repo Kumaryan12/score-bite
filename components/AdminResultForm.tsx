@@ -1,4 +1,5 @@
 import { CheckCircle2, DatabaseZap } from "lucide-react";
+import PendingButton from "@/components/PendingButton";
 import type { Match } from "@/types/db";
 import { seedSampleMatchesAction, submitResultAction } from "@/lib/actions";
 import { formatMatchTime } from "@/lib/helpers";
@@ -32,13 +33,13 @@ export default function AdminResultForm({ matches }: { matches: Match[] }) {
               Upserts all 104 FIFA World Cup 2026 matches into the database.
             </p>
           </div>
-          <button 
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 sm:w-auto" 
-            type="submit"
+          <PendingButton
+            className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 sm:w-auto"
+            pendingText="Importing..."
           >
             <DatabaseZap size={16} />
             Import matches
-          </button>
+          </PendingButton>
         </form>
 
         {/* Matches List */}
@@ -87,13 +88,13 @@ export default function AdminResultForm({ matches }: { matches: Match[] }) {
                 </div>
 
                 {/* Save Button */}
-                <button 
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-zinc-800 active:bg-zinc-950 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:active:bg-white sm:w-auto sm:py-2.5" 
-                  type="submit"
+                <PendingButton
+                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 px-5 py-3 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 sm:w-auto sm:py-2.5"
+                  pendingText="Updating result..."
                 >
                   <CheckCircle2 size={16} />
                   Save
-                </button>
+                </PendingButton>
 
               </div>
             </form>

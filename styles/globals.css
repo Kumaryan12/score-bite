@@ -35,15 +35,15 @@ textarea {
 }
 
 .field {
-  @apply w-full rounded-lg border border-white/10 bg-white/10 px-4 py-3 text-sm text-ink outline-none transition placeholder:text-ink/35 focus:border-pitch focus:ring-4 focus:ring-pitch/20;
+  @apply w-full rounded-lg border border-white/10 bg-white/10 px-4 py-3 text-sm text-ink outline-none transition-colors duration-150 placeholder:text-ink/35 focus:border-pitch focus:ring-4 focus:ring-pitch/20;
 }
 
 .button-primary {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-pitch px-4 py-3 text-sm font-black text-slate-950 shadow-sm shadow-pitch/20 transition hover:-translate-y-0.5 hover:bg-limepop disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-pitch px-4 py-3 text-sm font-black text-slate-950 transition-colors duration-150 hover:bg-limepop active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55;
 }
 
 .button-secondary {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/10 px-4 py-3 text-sm font-bold text-ink shadow-sm transition hover:-translate-y-0.5 hover:border-pitch/40 hover:bg-pitch/10;
+  @apply inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 bg-white/10 px-4 py-3 text-sm font-bold text-ink transition-colors duration-150 hover:border-pitch/40 hover:bg-pitch/10 active:scale-[0.98];
 }
 
 .surface {

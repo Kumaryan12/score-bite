@@ -144,6 +144,27 @@ as $$
   );
 $$;
 
+create or replace function public.is_match_open_for_prediction(target_match_id uuid)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1
+    from (
+      select id
+      from public.matches
+      where status = 'scheduled'
+        and kickoff_time > now()
+      order by kickoff_time asc
+      limit 2
+    ) open_matches
+    where open_matches.id = target_match_id
+  );
+$$;
+
 create or replace function public.join_league_by_invite(invite_code_input text)
 returns uuid
 language plpgsql
@@ -331,44 +352,28 @@ to authenticated
 using (public.is_league_member(league_id));
 
 drop policy if exists "users can predict before kickoff" on public.predictions;
+drop policy if exists "users can predict next two upcoming matches" on public.predictions;
 create policy "users can predict before kickoff"
 on public.predictions for insert
 to authenticated
 with check (
   user_id = auth.uid()
   and public.is_league_member(league_id)
-  and exists (
-    select 1
-    from public.matches
-    where matches.id = match_id
-      and matches.status = 'scheduled'
-      and matches.kickoff_time > now()
-  )
+  and public.is_match_open_for_prediction(match_id)
 );
 
 drop policy if exists "users can update own prediction before kickoff" on public.predictions;
+drop policy if exists "users can update own prediction for next two upcoming matches" on public.predictions;
 create policy "users can update own prediction before kickoff"
 on public.predictions for update
 to authenticated
 using (
   user_id = auth.uid()
-  and exists (
-    select 1
-    from public.matches
-    where matches.id = match_id
-      and matches.status = 'scheduled'
-      and matches.kickoff_time > now()
-  )
+  and public.is_match_open_for_prediction(match_id)
 )
 with check (
   user_id = auth.uid()
-  and exists (
-    select 1
-    from public.matches
-    where matches.id = match_id
-      and matches.status = 'scheduled'
-      and matches.kickoff_time > now()
-  )
+  and public.is_match_open_for_prediction(match_id)
 );
 
 drop policy if exists "league admins can score predictions" on public.predictions;
@@ -405,3 +410,4 @@ using (public.is_league_admin(league_id));
 
 grant execute on function public.join_league_by_invite(text) to authenticated;
 grant execute on function public.create_league_for_current_user(text, text) to authenticated;
+grant execute on function public.is_match_open_for_prediction(uuid) to authenticated;

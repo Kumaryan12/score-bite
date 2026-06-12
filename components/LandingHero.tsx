@@ -88,10 +88,10 @@ export default function LandingHero({ user }: { user: any }) {
         
         <motion.div variants={itemVars} className="mt-10 flex flex-col gap-4 sm:flex-row">
           <Link 
-            className="group flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-sm font-bold text-zinc-950 transition-all hover:scale-105 hover:bg-zinc-100 hover:shadow-[0_0_40px_rgba(255,255,255,0.3)] active:scale-95" 
+            className="group flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 text-sm font-bold text-zinc-950 transition-colors duration-150 hover:bg-zinc-100 active:scale-[0.98]"
             href={user ? "/dashboard" : "/login"}
           >
-            <Trophy size={18} className="transition-transform group-hover:-rotate-12" />
+            <Trophy size={18} />
             {user ? "Open Dashboard" : "Start your league"}
           </Link>
           <Link 
@@ -99,7 +99,7 @@ export default function LandingHero({ user }: { user: any }) {
             href="/matches"
           >
             View schedule
-            <ArrowRight size={16} className="text-zinc-500 transition-transform group-hover:translate-x-1 group-hover:text-white" />
+            <ArrowRight size={16} className="text-zinc-500 group-hover:text-white" />
           </Link>
         </motion.div>
       </motion.div>
@@ -116,7 +116,7 @@ export default function LandingHero({ user }: { user: any }) {
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-          className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-2xl backdrop-blur-2xl sm:p-8"
+          className="group rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 to-white/5 p-6 shadow-sm backdrop-blur-2xl sm:p-8"
         >
           {/* Internal elements pop out in 3D using translateZ */}
           <div style={{ transform: "translateZ(30px)" }} className="flex items-center justify-between border-b border-white/10 pb-4">

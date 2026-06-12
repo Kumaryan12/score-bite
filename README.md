@@ -19,8 +19,8 @@ Core flows:
 3. ScoreBite generates an invite code.
 4. Friends join the league with that code.
 5. Everyone sees the shared World Cup match schedule.
-6. Users submit score predictions before kickoff.
-7. Predictions lock automatically once a match starts.
+6. Users submit score predictions for only the next 2 upcoming matches.
+7. Predictions lock automatically once a match starts or falls outside the open prediction window.
 8. A league owner/admin enters final match results.
 9. The leaderboard updates using the scoring rules.
 10. Friendly stake reminders appear after results are entered.
@@ -33,6 +33,7 @@ Core flows:
 - Public World Cup match schedule page
 - Full FIFA World Cup 2026 match importer
 - Prediction forms for match scores
+- Prediction window limited to the next 2 upcoming matches
 - Friendly stake text on predictions
 - Automatic prediction locking after kickoff
 - Admin result entry
@@ -212,7 +213,7 @@ High-level policy behavior:
 - Users can only see league member lists for their own leagues.
 - Users can create their own private leagues.
 - Users can join leagues through invite codes.
-- Users can create/update their own predictions before kickoff.
+- Users can create/update their own predictions only for the next 2 upcoming matches before kickoff.
 - Match schedules are publicly readable.
 - League owners/admins can enter results.
 - League members can see stake reminders for their own league.
@@ -357,10 +358,10 @@ Use this before calling a deployment production-ready:
 5. Join from another Google account or browser profile.
 6. Import World Cup matches from `/admin`.
 7. Open `/matches` and confirm upcoming matches appear.
-8. Open a league match and submit a prediction.
+8. Open one of the next 2 upcoming league matches and submit a prediction.
 9. Add a friendly stake.
 10. Refresh and confirm the prediction persists.
-11. Confirm completed/past matches are locked.
+11. Confirm completed/past matches and later future matches are locked.
 12. Enter a result from `/admin`.
 13. Confirm leaderboard points update.
 14. Confirm stake reminders appear.

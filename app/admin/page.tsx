@@ -3,6 +3,9 @@ import AdminResultForm from "@/components/AdminResultForm";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 import type { Match } from "@/types/db";
 
+const ADMIN_MATCH_COLUMNS =
+  "id,match_number,tournament,stage,group_name,team_a,team_b,kickoff_time,venue,team_a_score,team_b_score,status,created_at";
+
 export default async function AdminPage({
   searchParams
 }: {
@@ -29,7 +32,10 @@ export default async function AdminPage({
     redirect("/dashboard?error=Only league owners or admins can enter results.");
   }
 
-  const { data: matches } = await supabase.from("matches").select("*").order("kickoff_time", { ascending: true });
+  const { data: matches } = await supabase
+    .from("matches")
+    .select(ADMIN_MATCH_COLUMNS)
+    .order("kickoff_time", { ascending: true });
 
   return (
     <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
@@ -42,13 +48,13 @@ export default async function AdminPage({
       </div>
 
       {searchParams.error ? (
-        <p className="mt-5 rounded-lg bg-salsa/10 px-4 py-3 text-sm font-bold text-salsa">{searchParams.error}</p>
+        <p className="mt-5 rounded-lg bg-salsa/10 px-4 py-3 text-sm font-bold text-salsa" role="alert">{searchParams.error}</p>
       ) : null}
       {searchParams.saved ? (
-        <p className="mt-5 rounded-lg bg-limepop/45 px-4 py-3 text-sm font-bold text-pitch">Result saved.</p>
+        <p aria-live="polite" className="mt-5 rounded-lg bg-limepop/45 px-4 py-3 text-sm font-bold text-pitch" role="status">Result saved.</p>
       ) : null}
       {searchParams.seeded ? (
-        <p className="mt-5 rounded-lg bg-limepop/45 px-4 py-3 text-sm font-bold text-pitch">Sample matches seeded.</p>
+        <p aria-live="polite" className="mt-5 rounded-lg bg-limepop/45 px-4 py-3 text-sm font-bold text-pitch" role="status">Sample matches seeded.</p>
       ) : null}
 
       <div className="mt-6">

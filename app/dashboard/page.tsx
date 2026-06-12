@@ -6,6 +6,9 @@ import MatchCard from "@/components/MatchCard";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 import type { League, Match, Prediction } from "@/types/db";
 
+const MATCH_CARD_COLUMNS =
+  "id,match_number,tournament,stage,group_name,team_a,team_b,kickoff_time,venue,team_a_score,team_b_score,status,created_at";
+
 export default async function DashboardPage({
   searchParams
 }: {
@@ -60,7 +63,7 @@ export default async function DashboardPage({
 
   const { data: matches } = await supabase
     .from("matches")
-    .select("*")
+    .select(MATCH_CARD_COLUMNS)
     .order("kickoff_time", { ascending: true })
     .limit(6);
 

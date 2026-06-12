@@ -8,6 +8,7 @@ import { generateInviteCode } from "@/lib/helpers";
 import { calculatePredictionPoints } from "@/lib/scoring";
 import { fifaLeagueName } from "@/lib/names";
 import { fetchWorldCup2026Matches } from "@/lib/worldCupSchedule";
+import { OPEN_PREDICTION_MATCH_LIMIT } from "@/lib/predictionWindow";
 
 type ResultPrediction = {
   id: string;
@@ -209,6 +210,19 @@ export async function savePredictionAction(formData: FormData) {
 
   if (!match || match.status !== "scheduled" || new Date(match.kickoff_time).getTime() <= Date.now()) {
     redirect(`/league/${leagueId}/match/${matchId}?error=Predictions are locked for this match.`);
+  }
+
+  const { data: openMatches } = await supabase
+    .from("matches")
+    .select("id")
+    .eq("status", "scheduled")
+    .gt("kickoff_time", new Date().toISOString())
+    .order("kickoff_time", { ascending: true })
+    .limit(OPEN_PREDICTION_MATCH_LIMIT);
+  const isInPredictionWindow = (openMatches ?? []).some((openMatch: { id: string }) => openMatch.id === matchId);
+
+  if (!isInPredictionWindow) {
+    redirect(`/league/${leagueId}/match/${matchId}?error=Predictions are only open for the next ${OPEN_PREDICTION_MATCH_LIMIT} upcoming matches.`);
   }
 
   const { error } = await supabase.from("predictions").upsert(

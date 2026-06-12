@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { Trophy, LogOut, PlusCircle, Users, UserRound, Activity } from "lucide-react";
+import PendingButton from "@/components/PendingButton";
 import { signOut } from "@/lib/actions";
 
 export default function Header({ user }: { user: User | null }) {
@@ -10,7 +11,7 @@ export default function Header({ user }: { user: User | null }) {
         
         {/* Brand Logo */}
         <Link href="/" className="group flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 dark:focus-visible:ring-zinc-100">
-          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-900 text-white transition-transform group-hover:scale-105 dark:bg-zinc-100 dark:text-zinc-900">
+          <div className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-900 text-white transition-colors duration-150 dark:bg-zinc-100 dark:text-zinc-900">
             <Trophy size={16} strokeWidth={2.5} />
           </div>
           <span className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
@@ -66,13 +67,13 @@ export default function Header({ user }: { user: User | null }) {
                 </Link>
                 
                 <form action={signOut}>
-                  <button 
-                    className="flex h-9 w-9 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-red-400" 
-                    aria-label="Sign out" 
-                    type="submit"
+                  <PendingButton
+                    ariaLabel="Sign out"
+                    className="flex h-9 w-9 items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-red-400 [&>svg]:h-[18px] [&>svg]:w-[18px]"
+                    pendingText=""
                   >
                     <LogOut size={18} />
-                  </button>
+                  </PendingButton>
                 </form>
               </div>
             </>

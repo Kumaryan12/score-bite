@@ -1,4 +1,5 @@
 import { Trophy, AlertCircle } from "lucide-react";
+import PendingButton from "@/components/PendingButton";
 import { createLeagueAction } from "@/lib/actions";
 import { fifaLeagueName } from "@/lib/names";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
@@ -45,7 +46,7 @@ export default async function CreateLeaguePage({
           </div>
 
           {searchParams.error && (
-            <div className="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-600 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-400">
+            <div className="mb-6 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-600 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-400" role="alert">
               <AlertCircle size={18} />
               {searchParams.error}
             </div>
@@ -65,13 +66,13 @@ export default async function CreateLeaguePage({
             />
           </div>
 
-          <button 
-            className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 py-3.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 active:bg-zinc-950 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:active:bg-white" 
-            type="submit"
+          <PendingButton
+            className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 py-3.5 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            pendingText="Creating..."
           >
             <Trophy size={18} />
             Create league
-          </button>
+          </PendingButton>
         </form>
       </section>
     </>

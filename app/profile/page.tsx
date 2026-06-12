@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { Camera, Save, UserRound } from "lucide-react";
+import PendingButton from "@/components/PendingButton";
 import { updateProfileAction } from "@/lib/actions";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 import { initials } from "@/lib/helpers";
@@ -19,7 +20,11 @@ export default async function ProfilePage({
     redirect("/login");
   }
 
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("id,username,full_name,bio,favorite_team,avatar_url,created_at")
+    .eq("id", user.id)
+    .maybeSingle();
   const typedProfile = profile as Profile | null;
   const fullName = typedProfile?.full_name ?? user.user_metadata.full_name ?? user.user_metadata.name ?? "";
   const avatarUrl = typedProfile?.avatar_url ?? user.user_metadata.avatar_url ?? "";
@@ -37,10 +42,10 @@ export default async function ProfilePage({
 
         <form action={updateProfileAction} className="grid gap-6 p-6">
           {searchParams.error ? (
-            <p className="rounded-lg bg-salsa/10 px-4 py-3 text-sm font-bold text-salsa">{searchParams.error}</p>
+            <p className="rounded-lg bg-salsa/10 px-4 py-3 text-sm font-bold text-salsa" role="alert">{searchParams.error}</p>
           ) : null}
           {searchParams.saved ? (
-            <p className="rounded-lg bg-pitch/10 px-4 py-3 text-sm font-bold text-pitch">Profile saved.</p>
+            <p aria-live="polite" className="rounded-lg bg-pitch/10 px-4 py-3 text-sm font-bold text-pitch" role="status">Profile saved.</p>
           ) : null}
 
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
@@ -110,10 +115,10 @@ export default async function ProfilePage({
             />
           </label>
 
-          <button className="button-primary" type="submit">
+          <PendingButton className="button-primary" pendingText="Saving profile...">
             <Save size={17} />
             Save profile
-          </button>
+          </PendingButton>
         </form>
       </div>
     </section>

@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import { Lock } from "lucide-react";
+import PendingButton from "@/components/PendingButton";
 import type { Match, Prediction } from "@/types/db";
 import { savePredictionAction } from "@/lib/actions";
 import { isPredictionLocked, stakeIdeas } from "@/lib/helpers";
@@ -7,22 +11,38 @@ export default function PredictionForm({
   leagueId,
   match,
   prediction,
+  canPredict = false,
 }: {
   leagueId: string;
   match: Match;
   prediction: Prediction | null;
+  canPredict?: boolean;
 }) {
   const locked = isPredictionLocked(match);
+  const disabled = locked || !canPredict;
+  const [scoreA, setScoreA] = useState(prediction?.pred_team_a_score?.toString() ?? "");
+  const [scoreB, setScoreB] = useState(prediction?.pred_team_b_score?.toString() ?? "");
+  const [stake, setStake] = useState(prediction?.stake_text ?? "");
+  const [optimisticPick, setOptimisticPick] = useState<{
+    scoreA: string;
+    scoreB: string;
+    stake: string;
+  } | null>(null);
 
   return (
     <form
       action={savePredictionAction}
       className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-6 dark:border-zinc-800 dark:bg-zinc-950"
+      onSubmit={() => {
+        if (!disabled && scoreA !== "" && scoreB !== "") {
+          setOptimisticPick({ scoreA, scoreB, stake });
+        }
+      }}
     >
       <input name="league_id" type="hidden" value={leagueId} />
       <input name="match_id" type="hidden" value={match.id} />
 
-      <fieldset className="space-y-8" disabled={locked}>
+      <fieldset className="space-y-8" disabled={disabled}>
         {/* Simple, clean header */}
         <div className="text-center">
           <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100">
@@ -40,12 +60,13 @@ export default function PredictionForm({
             <input
               id="pred_team_a"
               className="h-16 w-16 rounded-xl border border-zinc-200 bg-zinc-50 text-center text-3xl font-bold text-zinc-900 transition-colors placeholder:text-zinc-300 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-700 dark:focus:border-zinc-100 dark:focus:ring-zinc-100 [&::-webkit-inner-spin-button]:appearance-none"
-              defaultValue={prediction?.pred_team_a_score ?? ""}
               min={0}
               name="pred_team_a_score"
+              onChange={(event) => setScoreA(event.target.value)}
               type="number"
               placeholder="-"
               required
+              value={scoreA}
             />
           </div>
 
@@ -62,12 +83,13 @@ export default function PredictionForm({
             <input
               id="pred_team_b"
               className="h-16 w-16 rounded-xl border border-zinc-200 bg-zinc-50 text-center text-3xl font-bold text-zinc-900 transition-colors placeholder:text-zinc-300 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:placeholder:text-zinc-700 dark:focus:border-zinc-100 dark:focus:ring-zinc-100 [&::-webkit-inner-spin-button]:appearance-none"
-              defaultValue={prediction?.pred_team_b_score ?? ""}
               min={0}
               name="pred_team_b_score"
+              onChange={(event) => setScoreB(event.target.value)}
               type="number"
               placeholder="-"
               required
+              value={scoreB}
             />
           </div>
         </div>
@@ -80,11 +102,12 @@ export default function PredictionForm({
           <input
             id="stake"
             className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 transition-colors placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-zinc-100"
-            defaultValue={prediction?.stake_text ?? ""}
             list="stake-ideas"
             maxLength={80}
             name="stake_text"
+            onChange={(event) => setStake(event.target.value)}
             placeholder="Coffee, lunch, bragging rights..."
+            value={stake}
           />
           <datalist id="stake-ideas">
             {stakeIdeas.map((idea) => (
@@ -96,18 +119,30 @@ export default function PredictionForm({
 
       {/* Action Area */}
       <div className="mt-6">
+        {optimisticPick ? (
+          <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-400">
+            Saving {match.team_a} {optimisticPick.scoreA} - {optimisticPick.scoreB} {match.team_b}
+            {optimisticPick.stake ? ` with stake: ${optimisticPick.stake}` : ""}
+          </div>
+        ) : null}
+
         {locked ? (
           <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-100 py-3.5 text-sm font-medium text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
             <Lock size={16} />
             Predictions are locked
           </div>
+        ) : !canPredict ? (
+          <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-100 py-3.5 text-center text-sm font-medium text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400">
+            <Lock size={16} />
+            Predictions open only for the next 2 upcoming matches
+          </div>
         ) : (
-          <button
-            className="w-full rounded-lg bg-zinc-900 py-3.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 active:bg-zinc-950 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 dark:active:bg-white"
-            type="submit"
+          <PendingButton
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 py-3.5 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            pendingText="Saving prediction..."
           >
             Save prediction
-          </button>
+          </PendingButton>
         )}
       </div>
     </form>
