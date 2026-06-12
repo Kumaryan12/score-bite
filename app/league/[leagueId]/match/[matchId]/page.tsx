@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowLeft, CalendarClock, MapPin } from "lucide-react";
+import { ArrowLeft, CalendarClock, MapPin, CheckCircle2, AlertCircle } from "lucide-react";
 import PredictionForm from "@/components/PredictionForm";
 import { createServerSupabaseClient } from "@/lib/supabaseClient";
 import { formatMatchTime, resultText } from "@/lib/helpers";
@@ -53,53 +53,86 @@ export default async function MatchPredictionPage({
   const typedPrediction = prediction as Prediction | null;
 
   return (
-    <section className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-      <Link className="button-secondary mb-5" href={`/league/${params.leagueId}`}>
-        <ArrowLeft size={17} />
+    <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:py-12">
+      {/* Navigation */}
+      <Link 
+        className="group inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 mb-8" 
+        href={`/league/${params.leagueId}`}
+      >
+        <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-0.5" />
         Back to league
       </Link>
 
-      {searchParams.error ? (
-        <p className="mb-5 rounded-lg bg-salsa/10 px-4 py-3 text-sm font-bold text-salsa">{searchParams.error}</p>
-      ) : null}
-      {searchParams.saved ? (
-        <p className="mb-5 rounded-lg bg-limepop/45 px-4 py-3 text-sm font-bold text-pitch">Prediction saved.</p>
-      ) : null}
+      {/* Alerts */}
+      {searchParams.error && (
+        <div className="mb-8 flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-600 dark:border-red-900/50 dark:bg-red-950/20 dark:text-red-400">
+          <AlertCircle size={18} />
+          {searchParams.error}
+        </div>
+      )}
+      {searchParams.saved && (
+        <div className="mb-8 flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/20 dark:text-emerald-400">
+          <CheckCircle2 size={18} />
+          Prediction successfully saved.
+        </div>
+      )}
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_0.8fr]">
-        <PredictionForm leagueId={params.leagueId} match={typedMatch} prediction={typedPrediction} />
+      {/* Main Grid */}
+      <div className="grid items-start gap-8 lg:grid-cols-[1.2fr_1fr]">
+        
+        {/* Left Column: Form */}
+        <div>
+          <PredictionForm leagueId={params.leagueId} match={typedMatch} prediction={typedPrediction} />
+        </div>
 
-        <aside className="surface p-5">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-salsa">Match details</p>
-          <h1 className="mt-2 text-3xl font-black text-ink">
-            {typedMatch.team_a} vs {typedMatch.team_b}
-          </h1>
-          <div className="mt-5 grid gap-3 text-sm text-ink/70">
-            <p className="flex items-center gap-2">
-              <CalendarClock size={16} />
-              {formatMatchTime(typedMatch.kickoff_time)}
+        {/* Right Column: Match Details Sidebar */}
+        <aside className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950 sm:p-8">
+          
+          {/* Sidebar Header */}
+          <div className="mb-6 border-b border-zinc-100 pb-6 dark:border-zinc-800/50">
+            <p className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              Match details
             </p>
-            {typedMatch.venue ? (
+            <h1 className="mt-3 text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+              {typedMatch.team_a} <span className="mx-1 font-normal text-zinc-400">vs</span> {typedMatch.team_b}
+            </h1>
+            
+            <div className="mt-5 flex flex-col gap-3 text-sm text-zinc-600 dark:text-zinc-400">
               <p className="flex items-center gap-2">
-                <MapPin size={16} />
-                {typedMatch.venue}
+                <CalendarClock size={16} className="text-zinc-400 dark:text-zinc-500" />
+                {formatMatchTime(typedMatch.kickoff_time)}
               </p>
-            ) : null}
-          </div>
-          <div className="mt-5 grid grid-cols-2 gap-3">
-            <div className="rounded-lg bg-pitch/10 p-3">
-              <p className="text-xs font-bold text-ink/55">Result</p>
-              <p className="text-xl font-black text-ink">{resultText(typedMatch)}</p>
-            </div>
-            <div className="rounded-lg bg-limepop/25 p-3">
-              <p className="text-xs font-bold text-ink/55">Points</p>
-              <p className="text-xl font-black text-pitch">{typedPrediction?.points_awarded ?? "-"}</p>
+              {typedMatch.venue && (
+                <p className="flex items-center gap-2">
+                  <MapPin size={16} className="text-zinc-400 dark:text-zinc-500" />
+                  {typedMatch.venue}
+                </p>
+              )}
             </div>
           </div>
-          <p className="mt-5 rounded-lg bg-white/10 px-4 py-3 text-sm font-bold text-ink shadow-sm">
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
+              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Final result</p>
+              <p className="mt-1 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
+                {resultText(typedMatch) || "—"}
+              </p>
+            </div>
+            <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
+              <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Points earned</p>
+              <p className="mt-1 text-2xl font-semibold text-zinc-900 dark:text-zinc-100">
+                {typedPrediction?.points_awarded ?? "—"}
+              </p>
+            </div>
+          </div>
+
+          {/* Status Label */}
+          <div className="mt-4 flex items-center justify-center rounded-xl bg-zinc-100 px-4 py-3.5 text-sm font-medium text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
             {predictionLabel(typedPrediction?.points_awarded ?? null)}
-          </p>
+          </div>
         </aside>
+
       </div>
     </section>
   );

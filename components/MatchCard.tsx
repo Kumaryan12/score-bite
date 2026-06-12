@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarClock, MapPin, Lock, Pencil } from "lucide-react";
+import { CalendarClock, MapPin, Lock } from "lucide-react";
 import type { Match } from "@/types/db";
 import { formatMatchTime, isPredictionLocked, resultText } from "@/lib/helpers";
 import { StatusBadge } from "@/components/Badges";
@@ -7,7 +7,7 @@ import { StatusBadge } from "@/components/Badges";
 export default function MatchCard({
   match,
   leagueId,
-  prediction
+  prediction,
 }: {
   match: Match;
   leagueId?: string;
@@ -21,53 +21,89 @@ export default function MatchCard({
   const locked = isPredictionLocked(match);
 
   return (
-    <article className="surface p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-pitch/70">
+    <article className="group rounded-xl border border-zinc-200 bg-white p-5 transition-all hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700 sm:p-6">
+      {/* Header: Stage, Time, and Status */}
+      <div className="mb-6 flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-1.5">
+          <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
             {match.stage}
             {match.group_name ? ` · ${match.group_name}` : ""}
           </p>
-          <h3 className="mt-2 text-xl font-black text-ink">
-            {match.team_a} <span className="text-ink/35">vs</span> {match.team_b}
-          </h3>
+          <div className="flex items-center gap-3 text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="flex items-center gap-1.5">
+              <CalendarClock size={14} className="text-zinc-400 dark:text-zinc-500" />
+              {formatMatchTime(match.kickoff_time)}
+            </p>
+            {match.venue && (
+              <p className="hidden items-center gap-1.5 sm:flex">
+                <MapPin size={14} className="text-zinc-400 dark:text-zinc-500" />
+                {match.venue}
+              </p>
+            )}
+          </div>
         </div>
         <StatusBadge status={match.status} />
       </div>
 
-      <div className="mt-4 grid gap-2 text-sm text-ink/70">
-        <p className="flex items-center gap-2">
-          <CalendarClock size={16} />
-          {formatMatchTime(match.kickoff_time)}
-        </p>
-        {match.venue ? (
-          <p className="flex items-center gap-2">
-            <MapPin size={16} />
-            {match.venue}
-          </p>
-        ) : null}
-      </div>
-
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        <div className="rounded-lg bg-white/10 p-3">
-          <p className="text-xs font-bold text-ink/55">Result</p>
-          <p className="text-lg font-black text-ink">{resultText(match)}</p>
+      {/* Centerpiece: The Teams */}
+      <div className="mb-6 flex items-center justify-between">
+        <div className="flex-1 text-right">
+          <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 sm:text-2xl">
+            {match.team_a}
+          </h3>
         </div>
-        <div className="rounded-lg bg-limepop/25 p-3">
-          <p className="text-xs font-bold text-ink/55">Your pick</p>
-          <p className="text-lg font-black text-ink">
-            {prediction ? `${prediction.pred_team_a_score} - ${prediction.pred_team_b_score}` : "None"}
-          </p>
-          {prediction?.stake_text ? <p className="mt-1 text-xs font-bold text-salsa">{prediction.stake_text}</p> : null}
+        <div className="px-6">
+          <span className="text-sm font-normal text-zinc-400">vs</span>
+        </div>
+        <div className="flex-1 text-left">
+          <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 sm:text-2xl">
+            {match.team_b}
+          </h3>
         </div>
       </div>
 
-      {leagueId ? (
-        <Link className="button-secondary mt-4 w-full" href={`/league/${leagueId}/match/${match.id}`}>
-          {locked ? <Lock size={17} /> : <Pencil size={17} />}
-          {locked ? "View pick" : "Predict"}
+      {/* Data Grid: Actual Result vs User Pick */}
+      <div className="mb-5 grid grid-cols-2 gap-3">
+        {/* Match Result Block */}
+        <div className="flex flex-col items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900/50">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">Match result</p>
+          <p className="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+            {resultText(match) || "—"}
+          </p>
+        </div>
+
+        {/* User Pick Block */}
+        <div className="flex flex-col items-center justify-center rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900/50">
+          <p className="text-xs text-zinc-500 dark:text-zinc-400">Your pick</p>
+          <p className="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+            {prediction ? `${prediction.pred_team_a_score} - ${prediction.pred_team_b_score}` : "—"}
+          </p>
+        </div>
+      </div>
+
+      {/* Fun Stake Badge */}
+      {prediction?.stake_text && (
+        <div className="mb-5 flex justify-center">
+          <div className="inline-flex items-center rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:bg-zinc-900 dark:text-zinc-400">
+            Stake: {prediction.stake_text}
+          </div>
+        </div>
+      )}
+
+      {/* Call to Action Button */}
+      {leagueId && (
+        <Link
+          href={`/league/${leagueId}/match/${match.id}`}
+          className={`mt-2 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-colors ${
+            locked
+              ? "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              : "bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
+          }`}
+        >
+          {locked && <Lock size={15} />}
+          {locked ? "View details" : "Make prediction"}
         </Link>
-      ) : null}
+      )}
     </article>
   );
 }
