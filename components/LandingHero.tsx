@@ -136,7 +136,7 @@ export default function LandingHero({ user }: { user: any }) {
             </div>
             <p className="text-xl font-black text-white/20">VS</p>
             <div className="flex flex-col items-center justify-center rounded-2xl border border-red-500/20 bg-gradient-to-b from-red-500/10 to-black/40 py-6 shadow-[inset_0_0_20px_rgba(239,68,68,0.1)] transition-colors group-hover:border-red-500/40">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-red-400">Dave's Pick</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-red-400">Dave&apos;s Pick</p>
               <p className="mt-1 text-4xl font-black text-white">1</p>
             </div>
           </div>

@@ -154,7 +154,7 @@ export default async function LandingPage() {
                    <div className="mb-3 h-8 w-8 overflow-hidden rounded-full border border-white/20">
                     <div className="h-full w-full bg-gradient-to-tr from-orange-400 to-red-600"></div>
                   </div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-red-400">Dave's Pick</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-red-400">Dave&apos;s Pick</p>
                   <p className="mt-1 text-4xl font-black text-white">1</p>
                 </div>
               </div>
