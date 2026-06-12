@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Link from "next/link";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, Variants } from "framer-motion";
 import { Coffee, ShieldCheck, Trophy, ArrowRight, Star } from "lucide-react";
 
 export default function LandingHero({ user }: { user: any }) {
@@ -37,7 +37,7 @@ export default function LandingHero({ user }: { user: any }) {
   };
 
   // --- Animation Variants ---
-  const containerVars = {
+  const containerVars: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
@@ -45,7 +45,7 @@ export default function LandingHero({ user }: { user: any }) {
     },
   };
 
-  const itemVars = {
+  const itemVars: Variants = {
     hidden: { opacity: 0, y: 30, filter: "blur(10px)" },
     show: { 
       opacity: 1, 
