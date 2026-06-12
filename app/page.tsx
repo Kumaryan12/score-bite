@@ -85,7 +85,7 @@ export default function FIFA2026Landing() {
                 </motion.p>
                 
                 <motion.div variants={itemVariants} className="mt-10 flex flex-wrap items-center gap-4">
-                  <Link href="/join-league" className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 px-8 py-3.5 text-sm font-bold text-slate-950 shadow-[0_0_20px_rgba(234,179,8,0.3)] transition-transform hover:scale-105 active:scale-95">
+                  <Link href="/login" className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 px-8 py-3.5 text-sm font-bold text-slate-950 shadow-[0_0_20px_rgba(234,179,8,0.3)] transition-transform hover:scale-105 active:scale-95">
                     Join Now
                     <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
@@ -191,7 +191,7 @@ export default function FIFA2026Landing() {
               </div>
 
               <div className="mt-16 flex justify-center">
-                 <Link href="/join-league" className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 px-10 py-4 text-base font-bold text-slate-950 shadow-[0_0_25px_rgba(234,179,8,0.3)] transition-transform hover:scale-105 active:scale-95">
+                 <Link href="/login" className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 px-10 py-4 text-base font-bold text-slate-950 shadow-[0_0_25px_rgba(234,179,8,0.3)] transition-transform hover:scale-105 active:scale-95">
                     Start Playing Now
                     <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
