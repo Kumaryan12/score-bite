@@ -50,10 +50,12 @@ export async function signInWithGoogle() {
 
   const supabase = createServerSupabaseClient();
   const origin = headers().get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${origin}/auth/callback`
+      // FIX: Added ?next=/dashboard to ensure proper routing after login
+      redirectTo: `${origin}/auth/callback?next=/dashboard`
     }
   });
 
