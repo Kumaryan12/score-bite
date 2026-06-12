@@ -4,26 +4,23 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
-import { Globe, Users, Zap } from "lucide-react";
-
+import { 
+  Trophy, ChevronRight, Users, Calendar, Globe 
+} from "lucide-react";
+import Footer from "@/components/Footer";
 export default function FIFA2026Landing() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    setIsMounted(true);
   }, []);
 
+  // --- Animation Variants ---
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3,
-      },
+      transition: { staggerChildren: 0.15, delayChildren: 0.1 },
     },
   };
 
@@ -32,7 +29,7 @@ export default function FIFA2026Landing() {
     show: {
       opacity: 1,
       y: 0,
-      transition: { type: "spring" as const, stiffness: 100, damping: 20 },
+      transition: { type: "spring", stiffness: 100, damping: 20 },
     },
   };
 
@@ -44,174 +41,169 @@ export default function FIFA2026Landing() {
     },
   };
 
+  if (!isMounted) return null;
+
   return (
-    <div className="min-h-screen bg-zinc-950 overflow-hidden">
-      {/* Ambient Background Lights */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-[200px] -left-[200px] w-[500px] h-[500px] rounded-full bg-red-600/20 blur-[120px]"></div>
-        <div className="absolute -bottom-[200px] -right-[200px] w-[500px] h-[500px] rounded-full bg-blue-600/20 blur-[120px]"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-[#D4FF00]/5 blur-[100px]"></div>
-      </div>
+    <div className="min-h-screen bg-[#0A0E17] text-white selection:bg-yellow-500/30 overflow-x-hidden font-sans">
+      
+      {/* Background Image & Overlay */}
+      <div 
+        className="fixed inset-0 z-0 bg-[url('/stadium-bg.jpg')] bg-cover bg-center bg-no-repeat opacity-30 mix-blend-luminosity"
+        aria-hidden="true"
+      />
+      <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-[#0A0E17]/80 to-[#0A0E17]" />
 
-      {/* Main Content */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-10 md:py-20"
-      >
-        {/* Hero Section */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-          className="w-full max-w-3xl mx-auto text-center"
-        >
-          {/* Badge */}
-          <motion.div variants={itemVariants}>
-            <span className="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/50 px-4 py-2 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 backdrop-blur-md mb-8">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#D4FF00] opacity-75"></span>
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#D4FF00]"></span>
-              </span>
-              FIFA World Cup 2026
-            </span>
-          </motion.div>
-
-          {/* Trophy Image - Floating Animation */}
-          <motion.div
-            variants={itemVariants}
-            className="my-8 md:my-12"
+      {/* Main Content Container */}
+      <div className="relative z-10 flex min-h-screen flex-col">
+        
+        
+        {/* HERO SECTION */}
+        <main className="flex-1 px-4 pb-12 pt-10 lg:px-12 lg:pt-16">
+          <motion.div 
+            variants={containerVariants}
+            initial="hidden"
+            animate="show"
+            className="mx-auto max-w-[1400px]"
           >
-            <motion.div
-              variants={floatVariants}
-              initial="initial"
-              animate="animate"
-              className="flex justify-center"
+            <div className="grid items-center gap-12 lg:grid-cols-2">
+              
+              {/* Left: Hero Copy */}
+              <div className="flex flex-col items-start z-10">
+                
+                
+                
+                <motion.h1 variants={itemVariants} className="text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+                  Predict the <br />
+                  <span className="bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 bg-clip-text text-transparent drop-shadow-lg">
+                    World Cup.
+                  </span><br />
+                  Rule Your League.
+                </motion.h1>
+                
+                <motion.p variants={itemVariants} className="mt-6 max-w-lg text-lg text-slate-400">
+                  Join fans around the world in the ultimate prediction challenge. Make your picks, earn points, and climb to the top.
+                </motion.p>
+                
+                <motion.div variants={itemVariants} className="mt-10 flex flex-wrap items-center gap-4">
+                  <Link href="/join-league" className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 px-8 py-3.5 text-sm font-bold text-slate-950 shadow-[0_0_20px_rgba(234,179,8,0.3)] transition-transform hover:scale-105 active:scale-95">
+                    Join Now
+                    <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                  <a href="#how-it-works" className="flex items-center gap-2 rounded-full border border-white/20 bg-slate-900/50 px-8 py-3.5 text-sm font-bold text-white backdrop-blur-md transition-colors hover:bg-white/10 active:scale-95">
+                    Learn More
+                  </a>
+                </motion.div>
+              </div>
+
+              {/* Right: Trophy Graphic */}
+              <motion.div variants={itemVariants} className="relative hidden justify-center lg:flex">
+                <div 
+                  className="absolute top-1/2 -translate-y-1/2 text-[24rem] font-black leading-none text-transparent opacity-10 pointer-events-none" 
+                  style={{ WebkitTextStroke: '2px rgba(59, 130, 246, 0.8)' }}
+                >
+                  
+                </div>
+                <motion.div variants={floatVariants} initial="initial" animate="animate" className="relative z-10 h-[500px] w-full max-w-[400px]">
+                  <Image
+                    src="/images/image.png" 
+                    alt="World Cup Trophy"
+                    fill
+                    className="object-contain drop-shadow-[0_0_50px_rgba(234,179,8,0.3)]"
+                    priority
+                  />
+                </motion.div>
+              </motion.div>
+            </div>
+
+            {/* STATS & COUNTDOWN BAR */}
+            <motion.div variants={itemVariants} className="mt-12 flex flex-col items-center justify-between gap-6 rounded-2xl border border-white/10 bg-black/40 p-6 shadow-2xl backdrop-blur-xl lg:flex-row lg:px-10">
+              <div className="flex w-full flex-wrap justify-around gap-8 lg:w-auto lg:justify-start lg:gap-12">
+                <div className="flex items-center gap-3">
+                  <Users className="h-8 w-8 text-yellow-500" />
+                  <div>
+                    <p className="text-2xl font-black leading-none text-white">48</p>
+                    <p className="text-[10px] font-bold tracking-widest text-slate-400 mt-1">TEAMS</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-8 w-8 text-yellow-500" />
+                  <div>
+                    <p className="text-2xl font-black leading-none text-white">104</p>
+                    <p className="text-[10px] font-bold tracking-widest text-slate-400 mt-1">MATCHES</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Globe className="h-8 w-8 text-yellow-500" />
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-2xl font-black leading-none text-white">3</p>
+                      <div className="flex gap-1">
+                        <span className="h-4 w-6 rounded-[2px] bg-blue-600"></span>
+                        <span className="h-4 w-6 rounded-[2px] bg-red-600"></span>
+                        <span className="h-4 w-6 rounded-[2px] bg-green-600"></span>
+                      </div>
+                    </div>
+                    <p className="text-[10px] font-bold tracking-widest text-slate-400 mt-1">HOST COUNTRIES</p>
+                  </div>
+                </div>
+              </div>
+
+             
+                
+               
+            </motion.div>
+
+            {/* HOW IT WORKS SECTION */}
+            <motion.div 
+              id="how-it-works"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+              className="mt-24 pb-20"
             >
-              <div className="relative w-64 h-64 md:w-80 md:h-80">
-                <Image
-                  src="/images/image.png"
-                  alt="FIFA World Cup Trophy 2026"
-                  fill
-                  className="object-contain"
-                  priority
-                />
+              <div className="text-center mb-16">
+                <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">How It Works</h2>
+                <p className="mt-4 text-slate-400 max-w-2xl mx-auto text-lg">Three simple steps to dominate your friend group and claim the ultimate bragging rights.</p>
+              </div>
+              
+              <div className="grid md:grid-cols-3 gap-8">
+                {/* Step 1 */}
+                <div className="relative group rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-md hover:bg-white/10 hover:border-yellow-500/30 transition-all duration-300 shadow-xl">
+                  <div className="absolute -top-6 left-8 h-12 w-12 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-xl font-black text-slate-950 shadow-[0_0_20px_rgba(234,179,8,0.4)] group-hover:scale-110 transition-transform">1</div>
+                  <h3 className="text-2xl font-bold text-white mt-4 mb-3">Join a League</h3>
+                  <p className="text-slate-400 leading-relaxed">Got an invite code? Paste it in and instantly join your friends' or colleagues' private tournament arena.</p>
+                </div>
+                
+                {/* Step 2 */}
+                <div className="relative group rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-md hover:bg-white/10 hover:border-blue-500/30 transition-all duration-300 shadow-xl">
+                  <div className="absolute -top-6 left-8 h-12 w-12 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-xl font-black text-white shadow-[0_0_20px_rgba(59,130,246,0.4)] group-hover:scale-110 transition-transform">2</div>
+                  <h3 className="text-2xl font-bold text-white mt-4 mb-3">Lock Predictions</h3>
+                  <p className="text-slate-400 leading-relaxed">Analyze the matchups and lock in your exact score predictions before the whistle blows for all 104 matches.</p>
+                </div>
+                
+                {/* Step 3 */}
+                <div className="relative group rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-md hover:bg-white/10 hover:border-green-500/30 transition-all duration-300 shadow-xl">
+                  <div className="absolute -top-6 left-8 h-12 w-12 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center text-xl font-black text-white shadow-[0_0_20px_rgba(34,197,94,0.4)] group-hover:scale-110 transition-transform">3</div>
+                  <h3 className="text-2xl font-bold text-white mt-4 mb-3">Climb & Win</h3>
+                  <p className="text-slate-400 leading-relaxed">Earn points for correct results and perfect scores. Climb the live leaderboard and win those friendly stakes.</p>
+                </div>
+              </div>
+
+              <div className="mt-16 flex justify-center">
+                 <Link href="/join-league" className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600 px-10 py-4 text-base font-bold text-slate-950 shadow-[0_0_25px_rgba(234,179,8,0.3)] transition-transform hover:scale-105 active:scale-95">
+                    Start Playing Now
+                    <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
               </div>
             </motion.div>
+
           </motion.div>
-
-          {/* Main Headline */}
-          <motion.div variants={itemVariants} className="space-y-4 mb-6 md:mb-8">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.1]">
-              Your Group.
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4FF00] via-lime-300 to-[#D4FF00] animate-pulse">
-                Your Rules.
-              </span>
-            </h1>
-          </motion.div>
-
-          {/* Subheading */}
-          <motion.p
-            variants={itemVariants}
-            className="text-lg md:text-xl text-zinc-300 max-w-2xl mx-auto mb-8 leading-relaxed"
-          >
-            Predict scores, challenge friends, and claim bragging rights during the 2026 World Cup. 
-            No money. No odds. Just pure football knowledge.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
-          >
-            <Link
-              href="/login"
-              className="group relative px-8 py-4 bg-[#D4FF00] text-zinc-950 font-bold rounded-xl hover:scale-105 transition-all active:scale-95 shadow-lg hover:shadow-[0_0_30px_rgba(212,255,0,0.5)]"
-            >
-              Create Your League
-              <span className="absolute inset-0 rounded-xl bg-[#D4FF00] opacity-0 group-hover:opacity-20 transition-opacity"></span>
-            </Link>
-            <Link
-              href="/matches"
-              className="px-8 py-4 border border-zinc-700 text-white font-bold rounded-xl hover:border-[#D4FF00] hover:bg-zinc-900/50 transition-all"
-            >
-              View Schedule
-            </Link>
-          </motion.div>
-
-          {/* Features Grid */}
-          <motion.div
-            variants={itemVariants}
-            className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mt-12 mb-16"
-          >
-            {[
-              {
-                icon: <Globe size={24} />,
-                title: "Live Matches",
-                desc: "Track every 2026 World Cup game",
-              },
-              {
-                icon: <Users size={24} />,
-                title: "Private Leagues",
-                desc: "Invite friends and compete",
-              },
-              {
-                icon: <Zap size={24} />,
-                title: "Friendly Stakes",
-                desc: "Coffee, pizza, or bragging rights",
-              },
-            ].map((feature, idx) => (
-              <motion.div
-                key={idx}
-                variants={itemVariants}
-                className="group rounded-lg border border-white/5 bg-white/5 backdrop-blur p-6 hover:border-[#D4FF00]/50 hover:bg-white/10 transition-all"
-              >
-                <div className="text-[#D4FF00] mb-3 group-hover:scale-110 transition-transform">
-                  {feature.icon}
-                </div>
-                <h3 className="font-bold text-white mb-2">{feature.title}</h3>
-                <p className="text-sm text-zinc-400">{feature.desc}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Colorful Background Card */}
-          <motion.div
-            variants={itemVariants}
-            className="w-full rounded-2xl overflow-hidden border border-white/5 shadow-2xl mt-12"
-          >
-            
-          </motion.div>
-        </motion.div>
-
-        {/* Footer CTA */}
-        <motion.div
-          variants={itemVariants}
-          className="mt-16 text-center"
-        >
-          <p className="text-zinc-500 text-sm mb-4">
-            Ready to dominate your friend group?
-          </p>
-          <motion.div
-            initial={{ scale: 0.95 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring" as const, stiffness: 300 }}
-          >
-            <Link
-              href="/login"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-[#D4FF00] text-[#D4FF00] font-bold hover:bg-[#D4FF00] hover:text-zinc-950 transition-all"
-            >
-              Start Now
-              <span>→</span>
-            </Link>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-
-      {/* Mobile Bottom Padding */}
-      <div className="h-10 md:h-0"></div>
+        </main>
+        <Footer />
+      </div>
+      
     </div>
+    
   );
 }
