@@ -5,9 +5,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
 import { 
-  Trophy, ChevronRight, Users, Calendar, Globe 
+  ChevronRight, Users, Calendar, Globe 
 } from "lucide-react";
 import Footer from "@/components/Footer";
+
 export default function FIFA2026Landing() {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -46,16 +47,15 @@ export default function FIFA2026Landing() {
   return (
     <div className="min-h-screen bg-[#0A0E17] text-white selection:bg-yellow-500/30 overflow-x-hidden font-sans">
       
-      {/* Background Image & Overlay */}
+      {/* Background Image & Overlay - FIXED SYNTAX HERE */}
       <div 
-        className="fixed inset-0 z-0 bg-[url('public/images/image copy.png')] bg-cover bg-center bg-no-repeat opacity-30 mix-blend-luminosity"
+        className="fixed inset-0 z-0 bg-[url('/images/image-copy.png')] bg-cover bg-center bg-no-repeat opacity-30 mix-blend-luminosity"
         aria-hidden="true"
       />
       <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-[#0A0E17]/80 to-[#0A0E17]" />
 
       {/* Main Content Container */}
       <div className="relative z-10 flex min-h-screen flex-col">
-        
         
         {/* HERO SECTION */}
         <main className="flex-1 px-4 pb-12 pt-10 lg:px-12 lg:pt-16">
@@ -69,9 +69,6 @@ export default function FIFA2026Landing() {
               
               {/* Left: Hero Copy */}
               <div className="flex flex-col items-start z-10">
-                
-                
-                
                 <motion.h1 variants={itemVariants} className="text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
                   Predict the <br />
                   <span className="bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-500 bg-clip-text text-transparent drop-shadow-lg">
@@ -96,14 +93,18 @@ export default function FIFA2026Landing() {
               </div>
 
               {/* Right: Trophy Graphic */}
-              <motion.div variants={itemVariants} className="relative hidden justify-center lg:flex">
+              {/* Right: Trophy Graphic */}
+              <motion.div variants={itemVariants} className="relative flex justify-center mt-12 lg:mt-0">
+                {/* The "26" Background Text - Now responsive! */}
                 <div 
-                  className="absolute top-1/2 -translate-y-1/2 text-[24rem] font-black leading-none text-transparent opacity-10 pointer-events-none" 
+                  className="absolute top-1/2 -translate-y-1/2 text-[12rem] md:text-[18rem] lg:text-[24rem] font-black leading-none text-transparent opacity-10 pointer-events-none select-none" 
                   style={{ WebkitTextStroke: '2px rgba(59, 130, 246, 0.8)' }}
                 >
-                  
+                  26
                 </div>
-                <motion.div variants={floatVariants} initial="initial" animate="animate" className="relative z-10 h-[500px] w-full max-w-[400px]">
+                
+                {/* The Trophy Image - Adjusted height for mobile */}
+                <motion.div variants={floatVariants} initial="initial" animate="animate" className="relative z-10 h-[300px] sm:h-[400px] lg:h-[500px] w-full max-w-[300px] lg:max-w-[400px]">
                   <Image
                     src="/images/image.png" 
                     alt="World Cup Trophy"
@@ -115,7 +116,7 @@ export default function FIFA2026Landing() {
               </motion.div>
             </div>
 
-            {/* STATS & COUNTDOWN BAR */}
+            {/* STATS BAR */}
             <motion.div variants={itemVariants} className="mt-12 flex flex-col items-center justify-between gap-6 rounded-2xl border border-white/10 bg-black/40 p-6 shadow-2xl backdrop-blur-xl lg:flex-row lg:px-10">
               <div className="flex w-full flex-wrap justify-around gap-8 lg:w-auto lg:justify-start lg:gap-12">
                 <div className="flex items-center gap-3">
@@ -147,10 +148,6 @@ export default function FIFA2026Landing() {
                   </div>
                 </div>
               </div>
-
-             
-                
-               
             </motion.div>
 
             {/* HOW IT WORKS SECTION */}
@@ -200,10 +197,10 @@ export default function FIFA2026Landing() {
 
           </motion.div>
         </main>
+        
+        {/* Footer Component */}
         <Footer />
       </div>
-      
     </div>
-    
   );
 }
