@@ -48,7 +48,7 @@ export default function FIFA2026Landing() {
       
       {/* Background Image & Overlay */}
       <div 
-        className="fixed inset-0 z-0 bg-[url('/stadium-bg.jpg')] bg-cover bg-center bg-no-repeat opacity-30 mix-blend-luminosity"
+        className="fixed inset-0 z-0 bg-[url('public/images/image copy.png')] bg-cover bg-center bg-no-repeat opacity-30 mix-blend-luminosity"
         aria-hidden="true"
       />
       <div className="fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-[#0A0E17]/80 to-[#0A0E17]" />
@@ -172,7 +172,7 @@ export default function FIFA2026Landing() {
                 <div className="relative group rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur-md hover:bg-white/10 hover:border-yellow-500/30 transition-all duration-300 shadow-xl">
                   <div className="absolute -top-6 left-8 h-12 w-12 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-xl font-black text-slate-950 shadow-[0_0_20px_rgba(234,179,8,0.4)] group-hover:scale-110 transition-transform">1</div>
                   <h3 className="text-2xl font-bold text-white mt-4 mb-3">Join a League</h3>
-                  <p className="text-slate-400 leading-relaxed">Got an invite code? Paste it in and instantly join your friends' or colleagues' private tournament arena.</p>
+                  <p className="text-slate-400 leading-relaxed">Got an invite code? Paste it in and instantly join your friends&apos; or colleagues&apos; private tournament arena.</p>
                 </div>
                 
                 {/* Step 2 */}
