@@ -104,7 +104,7 @@ export default function FIFA2026Landing() {
           {/* Main Headline */}
           <motion.div variants={itemVariants} className="space-y-4 mb-6 md:mb-8">
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.1]">
-              Your League.
+              Your Group.
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4FF00] via-lime-300 to-[#D4FF00] animate-pulse">
                 Your Rules.
